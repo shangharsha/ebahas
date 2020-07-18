@@ -79,13 +79,13 @@ const GetUsers = ({
 														<td>{profile.email}</td>
 														<td>{profile.address}</td>
 														<td>
-															<a
+															<Link
 																href={`/user/${profile._id}/edit`}
 																className='btn btn-primary text-white'
 															>
 																{' '}
 																Edit{' '}
-															</a>{' '}
+															</Link>{' '}
 															<Link
 																onClick={() => deleteUser(profile._id)}
 																className='btn btn-danger text-white'
