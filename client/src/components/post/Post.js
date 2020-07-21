@@ -3,160 +3,103 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
-import { getPostBySlug } from '../../actions/post';
-import CommentItem from './CommentItem';
+import { getPostById, deleteComment } from '../../actions/post';
 import CommentForm from './CommentForm';
-import LikeandDislikes from './LikeandDislikes';
+import { Link } from 'react-router-dom';
 
 const Post = ({
-	getPostBySlug,
-	post: { post, posts, loading },
-	auth: { isAuthenticated },
+	getPostById,
+	deleteComment,
+	post: { post, loading },
+	auth,
 	match,
 }) => {
 	useEffect(() => {
-		getPostBySlug(match.params.slug);
-	}, [getPostBySlug, match.params.slug]);
+		getPostById(match.params.id);
+	}, [getPostById, match.params.id]);
 
 	return loading || post === null ? (
 		<Spinner />
 	) : (
 		<Fragment>
-			<div
-				className='site-cover site-cover-sm same-height overlay single-page'
-				style={{ backgroundImage: `url(../${post.image})` }}
-			>
-				<div className='container'>
-					<div className='row same-height justify-content-center'>
-						<div className='col-md-12 col-lg-10'>
-							<div className='post-entry text-center'>
-								<span className='post-category text-white bg-success mb-3'>
-									{post.categorytitle}
-								</span>
-								<h1 className='mb-4'>{post.title}</h1>
-								<div className='post-meta align-items-center text-center'>
-									<figure className='author-figure mb-0 mr-3 d-inline-block'>
-										{post.user ? (
-											<img
-												src={`../${post.user.image}`}
-												alt=''
-												className='img-fluid'
-											/>
-										) : (
-											<img
-												src={`../images/users/default-image.png`}
-												alt=''
-												className='img-fluid'
-											/>
-										)}
-									</figure>
-									<span className='d-inline-block mt-1'>By {post.name}</span>
-									<span>
-										&nbsp;-&nbsp;{' '}
-										<Moment format='D MMM YYYY'>{post.updatedAt}</Moment>{' '}
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div className='container'>
-				<div className='row blog-entries element-animate'>
-					<div className='col-md-12 col-lg-8 main-content'>
-						<div className='post-content-body'>
-							<p>{post.detail}</p>
-						</div>
+				<Link to='/' className='btn btn-primary mb-3'>
+					<i className='fas fa-arrow-circle-left'></i> Back to Posts
+				</Link>
 
-						<div className='pt-5'>
-							<p>Category: {post.categorytitle}</p>
-						</div>
-						<LikeandDislikes
-							postId={post._id}
-							postLikes={post.likes}
-							postDislikes={post.unlikes}
+				<div className='row border border-info mb-3'>
+					<div className='col-12 col-lg-4 text-center my-auto'>
+						<img
+							src={`../../${post.user.image}`}
+							alt=''
+							className='img-fluid rounded rounded-circle'
 						/>
-
-						<div className='pt-5'>
-							<h3 className='mb-5'>{post.comments.length} Comments</h3>
-							<ul className='comment-list'>
-								{post.comments.map(comment => (
-									<li className='comment' key={comment._id}>
-										<CommentItem
-											key={comment._id}
-											comment={comment}
-											post={post}
-										/>
-									</li>
-								))}
-							</ul>
-						</div>
-						{isAuthenticated ? (
-							<CommentForm postId={post._id} />
-						) : (
-							<Fragment>
-								<div className='comment-form-wrap pt-5'>
-									<h3 className='mb-5'>Login to comment on the post</h3>
-								</div>
-							</Fragment>
-						)}
+						<h5>{post.name}</h5>
+					</div>
+					<div className='col-12 col-lg-8 mb-4'>
+						<p className='text-black my-auto'>{post.detail}</p>
+						<p>
+							Posted on <Moment format='D/MMM/YYYY'>{post.createdAt}</Moment>
+						</p>
 					</div>
 				</div>
-			</div>
-			<div className='site-section'>
-				<div className='container'>
-					{posts.length > 1 ? (
-						<div className='row mb-5'>
-							<div className='col-12 text-center'>
-								<h2>More Related Posts</h2>
+				<div className='comments bg-info text-white font-weight-bold my-auto'>
+					<h4> Comments</h4>
+				</div>
+				{post.comments.length > 0 ? (
+					post.comments.map(comment => (
+						<div className='row border border-info mb-3' key={comment._id}>
+							<div className='col-12 col-lg-4 my-auto'>
+								{comment.user ? (
+									<img
+										src={`../../${comment.user.image}`}
+										alt=''
+										className='img-fluid comment-user rounded-circle'
+									/>
+								) : (
+									<img
+										src={'../../default-image.png'}
+										alt=''
+										className='img-fluid comment-user rounded-circle'
+									/>
+								)}
+
+								<h5>{comment.name}</h5>
+							</div>
+							<div className='col-12 col-lg-8 mb-4 my-auto'>
+								<p className='text-black '>{comment.text}</p>
+								<p>
+									Posted on{' '}
+									<Moment format='D/MMM/YYYY'>{comment.createdAt}</Moment>{' '}
+									{!auth.user
+										? ''
+										: (auth.user.isAdmin ||
+												auth.user._id === comment.user._id ||
+												auth.user._id === post.user._id) && (
+												<button
+													onClick={e => deleteComment(post._id, comment._id)}
+													class='btn btn-danger'
+												>
+													<i className='fas fa-times'></i>
+												</button>
+										  )}
+								</p>
 							</div>
 						</div>
-					) : (
-						''
-					)}
+					))
+				) : (
+					<h5 className='mb-3'>No comments </h5>
+				)}
 
-					<div className='row align-items-stretch retro-layout'>
-						{posts.length > 1
-							? posts.slice(1, 2).map(p => (
-									<div className='col-md-5 order-md-2'>
-										<a
-											href={`../../post/${p.slug}`}
-											className='hentry img-1 h-100 gradient'
-											style={{ backgroundImage: `url(../../${p.image})` }}
-										>
-											<span className='post-category text-white bg-danger'>
-												{p.categorytitle}
-											</span>
-											<div className='text'>
-												<h2>{p.title}</h2>
-												<span>{p.createdAt}</span>
-											</div>
-										</a>
-									</div>
-							  ))
-							: ''}
-						<div className='col-md-7'>
-							{posts.length > 2
-								? posts.slice(2, 4).map(p => (
-										<a
-											href={`../../post/${p.slug}`}
-											key={p._id}
-											className='hentry img-2 v-height mb30 gradient'
-											style={{ backgroundImage: `url(../../${p.image})` }}
-										>
-											<span className='post-category text-white bg-success'>
-												{p.categorytitle}
-											</span>
-											<div className='text text-sm'>
-												<h2>{p.title}</h2>
-												<span>{p.createdAt}</span>
-											</div>
-										</a>
-								  ))
-								: ''}
+				{auth.isAuthenticated ? (
+					<CommentForm postId={post._id} />
+				) : (
+					<div className='container bg-info  mb-3'>
+						<div className='comments text-white font-weight-bold my-auto'>
+							<h4> You must login to comment</h4>
 						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		</Fragment>
 	);
@@ -165,7 +108,8 @@ const Post = ({
 Post.propTypes = {
 	post: PropTypes.object.isRequired,
 	auth: PropTypes.object.isRequired,
-	getPostBySlug: PropTypes.func.isRequired,
+	getPostById: PropTypes.func.isRequired,
+	deleteComment: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -173,4 +117,4 @@ const mapStateToProps = state => ({
 	post: state.post,
 });
 
-export default connect(mapStateToProps, { getPostBySlug })(Post);
+export default connect(mapStateToProps, { getPostById, deleteComment })(Post);

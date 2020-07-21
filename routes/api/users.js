@@ -9,6 +9,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const User = require('../../models/User');
+const Post = require('../../models/Post');
 const multer = require('multer');
 
 var transporter = nodemailer.createTransport({
@@ -323,7 +324,9 @@ router.delete('/:id', admin, async (req, res) => {
 	}
 
 	try {
-		const users = await User.findOneAndDelete({
+		await Post.deleteMany({ user: req.params.id });
+
+		await User.findOneAndDelete({
 			_id: req.params.id,
 		});
 		res.json('User Deleted');

@@ -8,6 +8,7 @@ import {
 	ADD_COMMENT,
 	REMOVE_COMMENT,
 	POST_EDITED,
+	CLEAR_POST,
 } from '../actions/types';
 
 const initialState = {
@@ -47,19 +48,33 @@ export default function (state = initialState, action) {
 		case UPDATE_LIKES:
 			return {
 				...state,
-				post: { ...state.post, likes: payload.likes, unlikes: payload.unlikes },
+				posts: state.posts.map(post =>
+					post._id === payload.id
+						? { ...post, likes: payload.likes, unlikes: payload.unlikes }
+						: post
+				),
 				loading: false,
 			};
 		case UPDATE_DISLIKES:
 			return {
 				...state,
-				post: { ...state.post, unlikes: payload.unlikes, likes: payload.likes },
+				posts: state.posts.map(post =>
+					post._id === payload.id
+						? { ...post, likes: payload.likes, unlikes: payload.unlikes }
+						: post
+				),
 				loading: false,
 			};
 		case POST_ERROR:
 			return {
 				...state,
 				error: payload,
+				loading: false,
+			};
+		case CLEAR_POST:
+			return {
+				...state,
+				post: null,
 				loading: false,
 			};
 		case ADD_COMMENT:

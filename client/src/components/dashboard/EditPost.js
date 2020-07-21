@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import DashNav from './DashNav';
-import { getPostBySlug, updatePost } from '../../actions/post';
+import { getPostById, updatePost } from '../../actions/post';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 
@@ -8,53 +8,38 @@ import PropTypes from 'prop-types';
 
 const EditPost = ({
 	updatePost,
-	getPostBySlug,
+	getPostById,
 	post: { post, loading },
 	match,
 	category: { categories },
 }) => {
 	const [formData, setFormData] = useState({
-		title: '',
 		detail: '',
-		image: '',
 		approval: '',
 		publish: '',
 		category: '',
 	});
 
 	useEffect(() => {
-		getPostBySlug(match.params.slug);
+		getPostById(match.params.id);
 
 		setFormData({
-			title: loading || !post.title ? '' : post.title,
 			detail: loading || !post.detail ? '' : post.detail,
-			image: loading || !post.image ? '' : post.image,
 			approval: loading || !post.approval ? '' : post.approval,
 			publish: loading || !post.publish ? '' : post.publish,
 			category: loading || !post.categorytitle ? '' : post.categorytitle,
 		});
-	}, [getPostBySlug, loading]);
+	}, [getPostById, loading]);
 
-	const [file, setFile] = useState('');
-
-	const { title, detail, image, category } = formData;
+	const { title, detail, category } = formData;
 
 	const onChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const fileHandle = e => {
-		setFile(e.target.files[0]);
-	};
-
 	const onSubmit = e => {
 		e.preventDefault();
-		const fd = new FormData();
-		fd.append('postImage', file);
-		fd.append('title', title);
-		fd.append('detail', detail);
-		fd.append('category', category);
-		updatePost(post._id, fd);
+		updatePost(post._id, formData);
 	};
 
 	return (
@@ -69,13 +54,6 @@ const EditPost = ({
 							<div className='row'>
 								<div className='col-md-8 order-md-1'>
 									<h4 className='mb-3'>Edit Post</h4>
-
-									<img
-										src={`../../${image}`}
-										alt=''
-										className='img-thumbnail'
-									/>
-
 									<form
 										className='needs-validation'
 										onSubmit={e => onSubmit(e)}
@@ -101,21 +79,6 @@ const EditPost = ({
 											</select>
 										</div>
 										<div className='mb-3'>
-											<label htmlFor='title'>Post Title</label>
-											<div className='input-group'>
-												<input
-													type='text'
-													className='form-control'
-													name='title'
-													value={title}
-													onChange={e => onChange(e)}
-													placeholder='Title of the post'
-													required
-												/>
-											</div>
-										</div>
-
-										<div className='mb-3'>
 											<label htmlFor='detail'>Post Detail</label>
 											<div className='input-group'>
 												<textarea
@@ -129,16 +92,6 @@ const EditPost = ({
 												></textarea>
 											</div>
 										</div>
-
-										<label className='card-title text-center'>
-											Change Thumbnail
-										</label>
-
-										<input
-											type='file'
-											className='form-control-file'
-											onChange={fileHandle}
-										/>
 
 										<hr className='mb-4' />
 
@@ -160,7 +113,7 @@ const EditPost = ({
 };
 
 EditPost.propTypes = {
-	getPostBySlug: PropTypes.func.isRequired,
+	getPostById: PropTypes.func.isRequired,
 	updatePost: PropTypes.func.isRequired,
 	post: PropTypes.object.isRequired,
 	category: PropTypes.object.isRequired,
@@ -171,6 +124,4 @@ const mapStateToProps = state => ({
 	category: state.category,
 });
 
-export default connect(mapStateToProps, { getPostBySlug, updatePost })(
-	EditPost
-);
+export default connect(mapStateToProps, { getPostById, updatePost })(EditPost);

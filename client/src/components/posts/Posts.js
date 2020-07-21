@@ -2,9 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
-import PostItem from './PostItem';
 import ListItem from './ListItem';
-import CategoryItem from './CategoryItem';
 import { getPosts } from '../../actions/post';
 import Pagination from '../layout/Pagination';
 
@@ -30,73 +28,71 @@ const Posts = ({
 
 	return (
 		<Fragment>
-			<Fragment>
-				{loading ? (
-					<Spinner />
-				) : (
-					<Fragment>
-						<div className='container'>
-							<div className='row align-items-stretch retro-layout-2'>
-								{posts.length > 0 ? (
-									posts
-										.slice(pagination.start, pagination.start + 6)
-										.map(post => <PostItem key={post._id} post={post} />)
-								) : (
-									<h4>No posts found</h4>
-								)}
-								<div className='site-section'>
-									<div className='container'>
-										<div className='row'>
-											{posts.length > pagination.start + 6
-												? posts
-														.slice(pagination.start + 6, pagination.end)
-														.map(post => (
-															<ListItem key={post._id} post={post} />
-														))
-												: ''}
-										</div>
-									</div>
-								</div>
+			{loading ? (
+				<Spinner />
+			) : (
+				<Fragment>
+					<div class='container'>
+						<div class='row'>
+							<div class='col-12 col-lg-4 mb-4'>
+								<h4 className='text-center'>राजनैतिक बहस</h4>
+								{posts.length > 0
+									? posts
+											.filter(post => post.categorytitle === 'राजनैतिक')
+											.slice(0, 3)
+											.map(p => <ListItem key={p._id} post={p} />)
+									: 'No posts found'}
 							</div>
-							{posts.length > 12 ? (
-								<Pagination
-									showPerPage={showPerPage}
-									onPaginationChange={onPaginationChange}
-									total={posts.length}
-								/>
-							) : (
-								''
-							)}
+							<div class='col-12 col-lg-4 mb-4'>
+								<h4 className='text-center'> आर्थिक बहस</h4>
+								{posts.length > 0
+									? posts
+											.filter(post => post.categorytitle === 'आर्थिक')
+											.slice(0, 3)
+											.map(p => <ListItem key={p._id} post={p} />)
+									: 'No posts found'}
+							</div>
+							<div class='col-12 col-lg-4'>
+								<h4 className='text-center'>खेलकुद बहस</h4>
+
+								{posts.length > 0
+									? posts
+											.filter(post => post.categorytitle === 'खेलकुद')
+											.slice(0, 3)
+											.map(p => <ListItem key={p._id} post={p} />)
+									: 'No posts found'}
+							</div>
 						</div>
-					</Fragment>
-				)}
-			</Fragment>
-			<Fragment>
-				{loading ? (
-					<Spinner />
-				) : (
-					<Fragment>
-						<div className='site-section'>
-							<div className='text-center'>
-								<h2>Categories</h2>
-							</div>
+					</div>
+					<div className='container bg-light'>
+						<h4 className='text-center'>ताजा बहस</h4>
+						<div className='site-section '>
 							<div className='container'>
-								<div className='row align-items-stretch retro-layout-2'>
-									{categories.length > 0 ? (
-										categories
-											.slice(0, 6)
-											.map(category => (
-												<CategoryItem key={category._id} category={category} />
-											))
+								<div className='row'>
+									{posts.length > 0 ? (
+										posts.slice(pagination.start, pagination.end).map(p => (
+											<div className='col-lg-6 mb-4'>
+												<ListItem key={p._id} post={p} />
+											</div>
+										))
 									) : (
-										<h4>No category found</h4>
+										<h4>No posts found</h4>
 									)}
 								</div>
 							</div>
 						</div>
-					</Fragment>
-				)}
-			</Fragment>
+						{posts.length > 12 ? (
+							<Pagination
+								showPerPage={showPerPage}
+								onPaginationChange={onPaginationChange}
+								total={posts.length}
+							/>
+						) : (
+							''
+						)}
+					</div>
+				</Fragment>
+			)}
 		</Fragment>
 	);
 };

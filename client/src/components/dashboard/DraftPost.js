@@ -54,13 +54,13 @@ const DraftPost = ({
 												.slice(pagination.start, pagination.end)
 												.map(post => (
 													<tr key={post._id}>
-														<td>{post.title}</td>
+														<td>{post.detail.slice(0, 25)}</td>
 														<td>{post.categorytitle}</td>
 														<td>{post.name}</td>
 														<td>
 															<Link
 																className='btn btn-primary text-white'
-																to={`edit/${post.slug}`}
+																to={`edit/${post._id}`}
 															>
 																{' '}
 																Edit{' '}

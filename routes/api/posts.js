@@ -8,7 +8,6 @@ const auth = require('../../middleware/auth');
 const admin = require('../../middleware/admin');
 const { paginatedResults } = require('../../middleware/pagination');
 const nodemailer = require('nodemailer');
-const multer = require('multer');
 const Category = require('../../models/Category');
 
 var transporter = nodemailer.createTransport({
@@ -19,45 +18,13 @@ var transporter = nodemailer.createTransport({
 	},
 });
 
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, 'images/posts/');
-	},
-	filename: function (req, file, cb) {
-		cb(null, Date.now() + file.originalname);
-	},
-});
-
-const fileFilter = (req, file, cb) => {
-	if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-		cb(null, true);
-	} else {
-		cb(null, false);
-	}
-};
-
-const upload = multer({
-	storage: storage,
-	limits: {
-		fileSize: 1024 * 1024 * 5,
-	},
-	fileFilter: fileFilter,
-});
-
 //@ POST    api/posts
 //@ desc   add a post
 //@ access private
 
 router.post(
 	'/',
-	[
-		auth,
-		upload.single('postImage'),
-		[
-			check('title', 'title is required').not().isEmpty(),
-			check('detail', 'detail is required').not().isEmpty(),
-		],
-	],
+	[auth, [check('detail', 'detail is required').not().isEmpty()]],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -69,14 +36,6 @@ router.post(
 			if (!category) {
 				return res.status(400).json({ error: 'Category is required' });
 			}
-			let image = '';
-
-			if (req.file !== undefined) {
-				img = req.file.path;
-				image = img.split('\\').join('/');
-			} else {
-				image = 'images/posts/default-image.png';
-			}
 			var approval = true;
 			var publish = false;
 
@@ -86,11 +45,9 @@ router.post(
 			}
 
 			const newPost = new Post({
-				title: req.body.title,
 				detail: req.body.detail,
 				name: user.name,
 				user: user.id,
-				image: image,
 				approval: approval,
 				publish: publish,
 				category: category._id,
@@ -117,14 +74,7 @@ router.post(
 
 router.put(
 	'/:id',
-	[
-		auth,
-		upload.single('postImage'),
-		[
-			check('title', 'title is required').not().isEmpty(),
-			check('detail', 'detail is required').not().isEmpty(),
-		],
-	],
+	[auth, [check('detail', 'detail is required').not().isEmpty()]],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -135,21 +85,11 @@ router.put(
 			return res.status(400).json({ error: 'Category is required' });
 		}
 		try {
-			let image = '';
-
-			if (req.file !== undefined) {
-				img = req.file.path;
-				image = img.split('\\').join('/');
-			} else {
-				image = 'images/posts/default-image.png';
-			}
 			var post = await Post.findById(req.params.id);
 
 			if (req.user.admin || post.user.toString() == req.user.id) {
 				newPost = await Post.findByIdAndUpdate(req.params.id, {
-					title: req.body.title,
 					detail: req.body.detail,
-					image: image,
 					category: category._id,
 					categorytitle: category.title,
 				});
@@ -335,16 +275,15 @@ router.get('/pending', auth, async (req, res) => {
 	}
 });
 
-// @ route  GET api/posts/:slug
-//@ desc    post detail by slug
+// @ route  GET api/posts/:id
+//@ desc    post detail by id
 //@ access  public
 
-router.get('/:slug', async (req, res) => {
+router.get('/:id', async (req, res) => {
 	try {
-		const post = await Post.findOne({ slug: req.params.slug }).populate(
-			'user',
-			'image'
-		);
+		const post = await Post.findById(req.params.id)
+			.populate('user', 'image')
+			.populate('comments.user', 'image');
 		if (!post) {
 			return res.status(400).json({ msg: 'post not found' });
 		}
@@ -481,7 +420,9 @@ router.post(
 
 		try {
 			const user = await User.findById(req.user.id).select('-password');
-			const post = await Post.findById(req.params.id).populate('user', 'email');
+			var post = await Post.findById(req.params.id)
+				.populate('user', 'email')
+				.populate('comments.user', 'image');
 
 			const newComment = {
 				text: req.body.text,
@@ -492,6 +433,9 @@ router.post(
 			post.comments.unshift(newComment);
 
 			await post.save();
+			post = await Post.findById(req.params.id)
+				.populate('user', 'email')
+				.populate('comments.user', 'image');
 			res.json(post.comments);
 
 			if (post.user != req.user.id) {
@@ -503,12 +447,11 @@ router.post(
 						'Dear  ' +
 						post.name +
 						', \n\n You have recevied some new comments on your post  ' +
-						post.title +
 						'\n\n Click on the below link to see comments\n' +
 						'http://' +
 						req.headers.host +
 						'/post/' +
-						post.slug +
+						post._id +
 						'\n\n' +
 						'\n',
 				};
@@ -619,7 +562,7 @@ router.get('/count/all', auth, async (req, res) => {
 router.get('/search/:name', async (req, res) => {
 	try {
 		var regex = new RegExp(req.params.name, 'i');
-		const posts = await Post.find({ title: regex, publish: true })
+		const posts = await Post.find({ detail: regex, publish: true })
 			.populate('user', 'image')
 			.sort('-createdAt');
 		res.json(posts);
@@ -637,13 +580,13 @@ router.get('/search/published/:name', auth, async (req, res) => {
 	try {
 		var regex = new RegExp(req.params.name, 'i');
 		if (req.user.admin) {
-			const posts = await Post.find({ title: regex, publish: true }).sort(
+			const posts = await Post.find({ detail: regex, publish: true }).sort(
 				'-createdAt'
 			);
 			return res.json(posts);
 		}
 		const posts = await Post.find({
-			title: regex,
+			detail: regex,
 			publish: true,
 			user: req.user.id,
 		}).sort('-createdAt');

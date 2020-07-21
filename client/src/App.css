@@ -606,7 +606,7 @@ h6 {
 	color: #000;
 }
 .entry2 .post-meta .author-figure img {
-	width: 30px;
+	width: 50px;
 	border-radius: 50%;
 }
 
@@ -707,6 +707,40 @@ h6 {
 	}
 }
 
+.category-sidebar {
+	height: 100vh;
+	padding-left: 20px;
+	background-color: black;
+	opacity: 0.9;
+	color: whitesmoke;
+	width: 250px;
+	position: fixed;
+	z-index: 200;
+	left: -100%;
+	animation: slide-open 0.75s forwards;
+}
+
+.category-sidebar.close {
+	left: 0;
+	animation: slide-close 1s forwards;
+}
+
+.category-sidebar a {
+	color: rgb(255, 255, 255);
+}
+
+@keyframes slide-close {
+	100% {
+		left: -100%;
+	}
+}
+
+@keyframes slide-open {
+	100% {
+		left: 0;
+	}
+}
+
 .sidebar-box {
 	font-size: 15px;
 	width: 100%;
@@ -721,6 +755,14 @@ h6 {
 	margin-bottom: 30px;
 	padding-bottom: 20px;
 	border-bottom: 1px solid #e6e6e6;
+}
+
+.rounded {
+	width: 150px;
+}
+
+.comment-user {
+	width: 100px;
 }
 
 .tags {

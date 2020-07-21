@@ -7,8 +7,8 @@ const CommentForm = ({ postId, addComment }) => {
 	const [text, setText] = useState('');
 
 	return (
-		<div className='comment-form-wrap pt-5'>
-			<h3 className='mb-5'>Leave a comment</h3>
+		<div className='comment-form-wrap pt-3'>
+			<h3 className='mb-1'>Leave a comment</h3>
 			<form
 				onSubmit={e => {
 					e.preventDefault();

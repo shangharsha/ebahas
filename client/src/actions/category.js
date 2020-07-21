@@ -30,7 +30,7 @@ export const addCategory = fd => async dispatch => {
 	try {
 		const config = {
 			headers: {
-				'Content-Type': 'multipart/form-data',
+				'Content-Type': 'application/json',
 			},
 		};
 		console.log(fd);

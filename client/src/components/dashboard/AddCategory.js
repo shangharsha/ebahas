@@ -8,28 +8,21 @@ import PropTypes from 'prop-types';
 const AddCategory = ({ addCategory }) => {
 	const [formData, setFormData] = useState({
 		title: '',
+		slug: '',
 	});
 
-	const [file, setFile] = useState('');
-
-	const { title } = formData;
+	const { title, slug } = formData;
 
 	const onChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const fileHandle = e => {
-		setFile(e.target.files[0]);
-	};
-
 	const onSubmit = e => {
 		e.preventDefault();
-		const fd = new FormData();
-		fd.append('postImage', file);
-		fd.append('title', title);
-		addCategory(fd);
+		addCategory(formData);
 		setFormData({
 			title: '',
+			slug: '',
 		});
 	};
 
@@ -62,16 +55,23 @@ const AddCategory = ({ addCategory }) => {
 											/>
 										</div>
 									</div>
-									<label className='card-title text-center'>
-										Choose Thumbnail
-									</label>
 
-									<input
-										type='file'
-										className='form-control-file'
-										onChange={fileHandle}
-										required
-									/>
+									<div className='mb-3'>
+										<label htmlFor='title'>
+											Slug for Category(Only in English)
+										</label>
+										<div className='input-group'>
+											<input
+												type='text'
+												className='form-control'
+												name='slug'
+												value={slug}
+												onChange={e => onChange(e)}
+												placeholder='enter-slug-in-this-format'
+												required
+											/>
+										</div>
+									</div>
 
 									<hr className='mb-4' />
 

@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
-
-mongoose.plugin(slug);
 
 const CategorySchema = new mongoose.Schema(
 	{
@@ -12,12 +9,7 @@ const CategorySchema = new mongoose.Schema(
 		},
 		slug: {
 			type: String,
-			slug: 'title',
 			unique: true,
-		},
-
-		image: {
-			type: String,
 			required: true,
 		},
 	},

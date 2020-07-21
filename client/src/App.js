@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
 import Login from './components/auth/Login';
 import ForgetPassword from './components/auth/ForgetPassword';
 import ResetPassword from './components/auth/ResetPassword';
@@ -12,6 +13,7 @@ import CreatePost from './components/dashboard/CreatePost';
 import SearchPost from './components/search/Posts';
 import Dashboard from './components/dashboard/Dashboard';
 import PendingPost from './components/dashboard/PendingPost';
+import ViewPendingPost from './components/dashboard/ViewPendingPost';
 import DraftPost from './components/dashboard/DraftPost';
 import EditPost from './components/dashboard/EditPost';
 import Users from './components/dashboard/Users';
@@ -41,11 +43,33 @@ const App = () => {
 		store.dispatch(loadUser());
 	}, []);
 
+	const [sidebarOpen, setsidebarOpen] = useState(false);
+
+	const openHandler = () => {
+		if (!sidebarOpen) {
+			setsidebarOpen(true);
+		} else {
+			setsidebarOpen(false);
+		}
+	};
+
+	const sidebarCloseHandler = () => {
+		setsidebarOpen(false);
+	};
+
+	let sidebar;
+	if (sidebarOpen) {
+		sidebar = (
+			<Sidebar closes={sidebarCloseHandler} sidebar={'category-sidebar'} />
+		);
+	}
+
 	return (
 		<Provider store={store}>
 			<Router>
 				<Fragment>
-					<Navbar />
+					{sidebar}
+					<Navbar click={openHandler} />
 					<Route exact path='/' component={Posts} />
 					<section className='container'>
 						<Alert />
@@ -59,7 +83,7 @@ const App = () => {
 								component={ResetPassword}
 							/>
 							<Route exact path='/posts' component={Posts} />
-							<Route exact path='/post/:slug' component={Post} />
+							<Route exact path='/post/:id' component={Post} />
 							<Route exact path='/search' component={SearchPost} />
 							<Route exact path='/category/:slug' component={CatPosts} />
 							<Route exact path='/login' component={Login} />
@@ -68,6 +92,11 @@ const App = () => {
 								exact
 								path='/posts/pending'
 								component={PendingPost}
+							/>
+							<PrivateRoute
+								exact
+								path='/posts/pending/:id'
+								component={ViewPendingPost}
 							/>
 							<PrivateRoute exact path='/posts/draft' component={DraftPost} />
 							<PrivateRoute exact path='/dashboard/users' component={Users} />
@@ -83,11 +112,7 @@ const App = () => {
 								component={AddCategory}
 							/>
 							<PrivateRoute exact path='/posts/create' component={CreatePost} />
-							<PrivateRoute
-								exact
-								path='/posts/edit/:slug'
-								component={EditPost}
-							/>
+							<PrivateRoute exact path='/posts/edit/:id' component={EditPost} />
 							<PrivateRoute exact path='/user/:id/edit' component={EditUser} />
 
 							<PrivateRoute

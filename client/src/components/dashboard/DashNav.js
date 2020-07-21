@@ -20,7 +20,7 @@ const DashNav = ({ auth: { user } }) => {
 	);
 
 	return (
-		<div className='col-md-4 col-lg-2 sidebar'>
+		<div className='col-md-4 col-lg-2 sidebar mb-3'>
 			<nav id='sidebarMenu' className=' d-md-block bg-light'>
 				<div className='sidebar-dashboard sidebar-sticky pt-3'>
 					<ul className='nav flex-column'>

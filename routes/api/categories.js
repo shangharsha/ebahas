@@ -5,36 +5,6 @@ const User = require('../../models/User');
 const Post = require('../../models/Post');
 const { check, validationResult } = require('express-validator');
 const admin = require('../../middleware/admin');
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, 'images/categories');
-	},
-	filename: function (req, file, cb) {
-		cb(null, Date.now() + file.originalname);
-	},
-});
-
-const fileFilter = (req, file, cb) => {
-	if (
-		file.mimetype === 'image/jpeg' ||
-		file.mimetype === 'image/png' ||
-		file.mimetype === 'image/jpg'
-	) {
-		cb(null, true);
-	} else {
-		cb(null, false);
-	}
-};
-
-const upload = multer({
-	storage: storage,
-	limits: {
-		fileSize: 1024 * 1024 * 5,
-	},
-	fileFilter: fileFilter,
-});
 
 //@ POST    api/categories
 //@ desc   add a category
@@ -44,8 +14,10 @@ router.post(
 	'/',
 	[
 		admin,
-		upload.single('postImage'),
-		[check('title', 'title is required').not().isEmpty()],
+		[
+			check('title', 'title is required').not().isEmpty(),
+			check('slug', 'slug is required').not().isEmpty(),
+		],
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -54,17 +26,13 @@ router.post(
 		}
 		try {
 			const user = await User.findById(req.user.id).select('-password');
-			let image = '';
-			if (req.file !== undefined) {
-				img = req.file.path;
-				image = img.split('\\').join('/');
-			} else {
-				image = 'images/posts/default-image.png';
-			}
+
+			urlpath = req.body.slug.toLowerCase();
+			slug = urlpath.split(' ').join('-');
 
 			const newCategory = new Category({
 				title: req.body.title,
-				image: image,
+				slug: slug,
 			});
 
 			await newCategory.save();

@@ -149,13 +149,13 @@ const Dashboard = ({
 												.slice(pagination.start, pagination.end)
 												.map(post => (
 													<tr key={post._id}>
-														<td>{post.title}</td>
+														<td>{post.detail.slice(0, 25)}</td>
 														<td>{post.categorytitle}</td>
 														<td>{post.name}</td>
 														<td>
 															<a
 																className='btn btn-primary text-white'
-																href={`posts/edit/${post.slug}`}
+																href={`posts/edit/${post._id}`}
 															>
 																{' '}
 																Edit{' '}

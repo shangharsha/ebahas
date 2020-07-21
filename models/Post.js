@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
-
-mongoose.plugin(slug);
 
 const PostSchema = new mongoose.Schema(
 	{
@@ -21,15 +18,6 @@ const PostSchema = new mongoose.Schema(
 		name: {
 			type: String,
 		},
-		slug: {
-			type: String,
-			slug: 'title',
-			unique: true,
-		},
-		title: {
-			type: String,
-			required: true,
-		},
 		approval: {
 			type: Boolean,
 			default: true,
@@ -39,10 +27,6 @@ const PostSchema = new mongoose.Schema(
 			default: false,
 		},
 		detail: {
-			type: String,
-			required: true,
-		},
-		image: {
 			type: String,
 			required: true,
 		},

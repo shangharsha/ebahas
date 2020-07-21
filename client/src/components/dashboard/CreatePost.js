@@ -8,33 +8,20 @@ import PropTypes from 'prop-types';
 
 const CreatePost = ({ createPost, history, category: { categories } }) => {
 	const [formData, setFormData] = useState({
-		title: '',
 		detail: '',
 		category: '',
 	});
 
-	const [file, setFile] = useState('');
-
-	const { title, detail, category } = formData;
+	const { detail, category } = formData;
 
 	const onChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const fileHandle = e => {
-		setFile(e.target.files[0]);
-	};
-
 	const onSubmit = e => {
 		e.preventDefault();
-		const fd = new FormData();
-		fd.append('postImage', file);
-		fd.append('title', title);
-		fd.append('detail', detail);
-		fd.append('category', category);
-		createPost(fd, history);
+		createPost(formData, history);
 		setFormData({
-			title: '',
 			detail: '',
 			category: '',
 		});
@@ -58,7 +45,7 @@ const CreatePost = ({ createPost, history, category: { categories } }) => {
 											name='category'
 											onChange={e => onChange(e)}
 										>
-											<option selected defaultValue={category}>
+											<option selected value={category}>
 												Select Category
 											</option>
 											{categories.length > 0 ? (
@@ -73,22 +60,6 @@ const CreatePost = ({ createPost, history, category: { categories } }) => {
 										</select>
 									</div>
 									<div className='mb-3'>
-										<label htmlFor='title'>Post Title</label>
-
-										<div className='input-group'>
-											<input
-												type='text'
-												className='form-control'
-												name='title'
-												value={title}
-												onChange={e => onChange(e)}
-												placeholder='Title of the post'
-												required
-											/>
-										</div>
-									</div>
-
-									<div className='mb-3'>
 										<label htmlFor='detail'>Post Detail</label>
 										<div className='input-group'>
 											<textarea
@@ -102,17 +73,6 @@ const CreatePost = ({ createPost, history, category: { categories } }) => {
 											></textarea>
 										</div>
 									</div>
-
-									<label className='card-title text-center'>
-										Choose Thumbnail
-									</label>
-
-									<input
-										type='file'
-										className='form-control-file'
-										onChange={fileHandle}
-									/>
-
 									<hr className='mb-4' />
 
 									<button className='btn btn-primary  btn-block' type='submit'>

@@ -11,6 +11,7 @@ import {
 	POST_EDITED,
 	GET_COUNT,
 	COUNT_ERROR,
+	CLEAR_POST,
 } from './types';
 import { setAlert } from './alert';
 
@@ -22,6 +23,10 @@ export const getPosts = () => async dispatch => {
 		dispatch({
 			type: GET_POSTS,
 			payload: res.data,
+		});
+
+		dispatch({
+			type: CLEAR_POST,
 		});
 	} catch (err) {
 		dispatch({
@@ -40,6 +45,10 @@ export const publishPosts = () => async dispatch => {
 			type: GET_POSTS,
 			payload: res.data,
 		});
+
+		dispatch({
+			type: CLEAR_POST,
+		});
 	} catch (err) {
 		dispatch({
 			type: POST_ERROR,
@@ -56,6 +65,9 @@ export const pendingPosts = () => async dispatch => {
 		dispatch({
 			type: GET_POSTS,
 			payload: res.data,
+		});
+		dispatch({
+			type: CLEAR_POST,
 		});
 	} catch (err) {
 		dispatch({
@@ -74,6 +86,9 @@ export const draftPosts = () => async dispatch => {
 			type: GET_POSTS,
 			payload: res.data,
 		});
+		dispatch({
+			type: CLEAR_POST,
+		});
 	} catch (err) {
 		dispatch({
 			type: POST_ERROR,
@@ -82,10 +97,10 @@ export const draftPosts = () => async dispatch => {
 	}
 };
 
-// get post by slug
-export const getPostBySlug = postSlug => async dispatch => {
+// get post by id
+export const getPostById = postId => async dispatch => {
 	try {
-		const res = await axios.get(`/api/posts/${postSlug}`);
+		const res = await axios.get(`/api/posts/${postId}`);
 
 		dispatch({
 			type: GET_POST,
@@ -120,7 +135,7 @@ export const getPostByCatSlug = categorySlug => async dispatch => {
 export const createPost = (fd, history) => async dispatch => {
 	const config = {
 		headers: {
-			'Content-Type': 'multipart/form-data',
+			'Content-Type': 'application/json',
 		},
 	};
 
@@ -199,7 +214,7 @@ export const updatePost = (postId, formData) => async dispatch => {
 };
 
 //approve post by id
-export const approvePost = (postId, publish) => async dispatch => {
+export const approvePost = (postId, publish, history) => async dispatch => {
 	try {
 		const config = {
 			headers: {
@@ -209,12 +224,14 @@ export const approvePost = (postId, publish) => async dispatch => {
 
 		const body = JSON.stringify({ publish });
 
-		await axios.put(`../api/posts/${postId}/approve`, body, config);
+		await axios.put(`../../api/posts/${postId}/approve`, body, config);
 
 		dispatch({
 			type: POST_UPDATED,
 			payload: postId,
 		});
+
+		history.push('/posts/pending');
 
 		dispatch(setAlert('Post Successfully Updated', 'success'));
 	} catch (err) {

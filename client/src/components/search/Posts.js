@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 import ListItem from '../posts/ListItem';
-import CategoryItem from '../posts/CategoryItem';
 
 import Pagination from '../layout/Pagination';
 
-const Posts = ({ post: { posts, loading }, category: { categories } }) => {
+const Posts = ({ post: { posts, loading } }) => {
 	const [showPerPage] = useState(12);
 
 	const [pagination, setPagination] = useState({
@@ -49,44 +48,16 @@ const Posts = ({ post: { posts, loading }, category: { categories } }) => {
 					</Fragment>
 				)}
 			</Fragment>
-			<Fragment>
-				{loading ? (
-					<Spinner />
-				) : (
-					<Fragment>
-						<div className='site-section'>
-							<div className='text-center'>
-								<h2>Categories</h2>
-							</div>
-							<div className='container'>
-								<div className='row align-items-stretch retro-layout-2'>
-									{categories.length > 0 ? (
-										categories
-											.slice(0, 6)
-											.map(category => (
-												<CategoryItem key={category._id} category={category} />
-											))
-									) : (
-										<h4>No category found</h4>
-									)}
-								</div>
-							</div>
-						</div>
-					</Fragment>
-				)}
-			</Fragment>
 		</Fragment>
 	);
 };
 
 Posts.propTypes = {
 	post: PropTypes.object.isRequired,
-	category: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
 	post: state.post,
-	category: state.category,
 });
 
 export default connect(mapStateToProps, {})(Posts);

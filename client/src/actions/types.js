@@ -22,6 +22,7 @@ export const USER_LOADED = 'USER_LOADED';
 export const USER_DELETED = 'USER_DELETED';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const CLEAR_PROFILE = 'CLEAR_PROFILE';
+export const CLEAR_POST = 'CLEAR_POST';
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const REMOVE_COMMENT = 'REMOVE_COMMENT';
 export const DELETE_CATEGORY = 'DELETE_CATEGORY';

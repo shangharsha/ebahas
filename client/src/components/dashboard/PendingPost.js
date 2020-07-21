@@ -28,10 +28,6 @@ const PendingPost = ({
 		setPagination({ start: start, end: end });
 	};
 
-	const onClick = (postId, approval) => {
-		approvePost(postId, approval);
-	};
-
 	return (
 		<div className='container-fluid'>
 			<div className='row'>
@@ -58,30 +54,18 @@ const PendingPost = ({
 												.slice(pagination.start, pagination.end)
 												.map(post => (
 													<tr key={post._id}>
-														<td>{post.title}</td>
+														<td>{post.detail.slice(0, 25)}</td>
 														<td>{post.categorytitle}</td>
 														<td>{post.name}</td>
-
-														{!loading && user.isAdmin === true ? (
-															<td>
-																<Link
-																	onClick={() => onClick(post._id, true)}
-																	className='btn btn-primary text-white'
-																>
-																	{' '}
-																	Approve{' '}
-																</Link>{' '}
-																<Link
-																	onClick={() => onClick(post._id, false)}
-																	className='btn btn-danger text-white'
-																>
-																	{' '}
-																	Reject{' '}
-																</Link>
-															</td>
-														) : (
-															<td></td>
-														)}
+														<td>
+															<Link
+																to={`/posts/pending/${post._id}`}
+																className='btn btn-primary text-white'
+															>
+																{' '}
+																View Post{' '}
+															</Link>{' '}
+														</td>
 													</tr>
 												))
 										) : (

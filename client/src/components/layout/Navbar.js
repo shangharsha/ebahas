@@ -13,6 +13,7 @@ const Navbar = ({
 	logout,
 	history,
 	category: { categories, loading },
+	click,
 }) => {
 	useEffect(() => {
 		getCategories();
@@ -34,6 +35,13 @@ const Navbar = ({
 	const authLinks = (
 		<div className='row d-flex flex-column flex-md-row align-items-center'>
 			<div className='col-4 pt-1'>
+				<button
+					type='button'
+					onClick={click}
+					className='btn btn-sm btn-outline-secondary'
+				>
+					<i className='fas fa-bars'></i>
+				</button>{' '}
 				<Link className='btn btn-sm btn-outline-secondary' to='/posts/create'>
 					Create Post
 				</Link>
@@ -69,6 +77,13 @@ const Navbar = ({
 	const guestLinks = (
 		<div className='row d-flex flex-column flex-md-row justify-content-between align-items-center'>
 			<div className='col-4 pt-1'>
+				<button
+					type='button'
+					onClick={click}
+					className='btn btn-sm btn-outline-secondary'
+				>
+					<i className='fas fa-bars'></i>
+				</button>{' '}
 				<Link className='btn btn-sm btn-outline-secondary' to='/login'>
 					Login
 				</Link>
@@ -80,14 +95,21 @@ const Navbar = ({
 			</div>
 			<div className='text-center mr-4'>
 				<form className='form-inline' onSubmit={e => onSubmit(e)}>
-					<input
-						type='text'
-						placeholder='Search...'
-						name='query'
-						value={query}
-						onChange={e => setquery(e.target.value)}
-						aria-label='Search'
-					/>
+					<div className='input-group'>
+						<input
+							type='text'
+							placeholder='Search...'
+							name='query'
+							value={query}
+							onChange={e => setquery(e.target.value)}
+							aria-label='Search'
+						/>
+						<div className='input-group-append'>
+							<button className='btn btn-sm btn-outline-secondary'>
+								<i className='fas fa-search'></i>
+							</button>
+						</div>
+					</div>
 				</form>
 			</div>
 			<Link className='btn btn-sm btn-outline-secondary' to='/register'>
@@ -97,14 +119,14 @@ const Navbar = ({
 	);
 
 	return (
-		<div className='container'>
+		<div className='container bg-light mb-3'>
 			<header className='blog-header py-3'>
 				{!loading && (
 					<Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>
 				)}
 			</header>
 
-			<div className='nav-scroller py-1 mb-2'>
+			{/* <div className='nav-scroller py-1 mb-2'>
 				<nav className='nav d-flex justify-content-between collapse'>
 					{categories.length > 0 ? (
 						categories.slice(0, 12).map(category => (
@@ -120,7 +142,7 @@ const Navbar = ({
 						<h4>categories not found</h4>
 					)}
 				</nav>
-			</div>
+			</div> */}
 		</div>
 	);
 };
@@ -130,6 +152,7 @@ Navbar.propTypes = {
 	searchPost: PropTypes.func.isRequired,
 	category: PropTypes.object.isRequired,
 	logout: PropTypes.func.isRequired,
+	click: PropTypes.func.isRequired,
 	auth: PropTypes.object.isRequired,
 };
 
@@ -138,6 +161,8 @@ const mapStateToProps = state => ({
 	category: state.category,
 });
 
-export default connect(mapStateToProps, { logout, getCategories, searchPost })(
-	withRouter(Navbar)
-);
+export default connect(mapStateToProps, {
+	logout,
+	getCategories,
+	searchPost,
+})(withRouter(Navbar));
