@@ -37,6 +37,7 @@ const Post = ({
 						<h5>{post.name}</h5>
 					</div>
 					<div className='col-12 col-lg-8 mb-4'>
+						<h4>{post.title}</h4>
 						<p className='text-black my-auto'>{post.detail}</p>
 						<p>
 							Posted on <Moment format='D/MMM/YYYY'>{post.createdAt}</Moment>

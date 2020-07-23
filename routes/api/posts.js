@@ -46,6 +46,7 @@ router.post(
 
 			const newPost = new Post({
 				detail: req.body.detail,
+				title: req.body.title,
 				name: user.name,
 				user: user.id,
 				approval: approval,
@@ -90,6 +91,7 @@ router.put(
 			if (req.user.admin || post.user.toString() == req.user.id) {
 				newPost = await Post.findByIdAndUpdate(req.params.id, {
 					detail: req.body.detail,
+					title: req.body.title,
 					category: category._id,
 					categorytitle: category.title,
 				});

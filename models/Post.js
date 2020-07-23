@@ -26,6 +26,9 @@ const PostSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		title: {
+			type: String,
+		},
 		detail: {
 			type: String,
 			required: true,

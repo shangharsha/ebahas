@@ -18,6 +18,7 @@ const EditPost = ({
 		approval: '',
 		publish: '',
 		category: '',
+		title: '',
 	});
 
 	useEffect(() => {
@@ -25,6 +26,7 @@ const EditPost = ({
 
 		setFormData({
 			detail: loading || !post.detail ? '' : post.detail,
+			title: loading || !post.title ? '' : post.title,
 			approval: loading || !post.approval ? '' : post.approval,
 			publish: loading || !post.publish ? '' : post.publish,
 			category: loading || !post.categorytitle ? '' : post.categorytitle,
@@ -78,6 +80,21 @@ const EditPost = ({
 												)}
 											</select>
 										</div>
+
+										<div className='mb-3'>
+											<label htmlFor='detail'>Post Title(Optional)</label>
+											<div className='input-group'>
+												<input
+													type='text'
+													className='form-control'
+													name='title'
+													value={title}
+													onChange={e => onChange(e)}
+													placeholder='Enter post title'
+												></input>
+											</div>
+										</div>
+
 										<div className='mb-3'>
 											<label htmlFor='detail'>Post Detail</label>
 											<div className='input-group'>

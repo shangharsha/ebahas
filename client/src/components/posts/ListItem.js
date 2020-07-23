@@ -42,6 +42,9 @@ const ListItem = ({ post, addLike, addDislike, auth: { isAuthenticated } }) => {
 					</h6>
 				</div>
 				<div className='text-left'>
+					<span className='post-title text-black mb-2'>{post.title}</span>
+				</div>
+				<div className='text-left'>
 					<span className='post-category text-white bg-secondary mb-2'>
 						{post.categorytitle}
 					</span>

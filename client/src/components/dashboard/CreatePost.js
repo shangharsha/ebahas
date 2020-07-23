@@ -9,10 +9,11 @@ import PropTypes from 'prop-types';
 const CreatePost = ({ createPost, history, category: { categories } }) => {
 	const [formData, setFormData] = useState({
 		detail: '',
+		title: '',
 		category: '',
 	});
 
-	const { detail, category } = formData;
+	const { detail, category, title } = formData;
 
 	const onChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,6 +23,7 @@ const CreatePost = ({ createPost, history, category: { categories } }) => {
 		e.preventDefault();
 		createPost(formData, history);
 		setFormData({
+			title: '',
 			detail: '',
 			category: '',
 		});
@@ -59,6 +61,21 @@ const CreatePost = ({ createPost, history, category: { categories } }) => {
 											)}
 										</select>
 									</div>
+
+									<div className='mb-3'>
+										<label htmlFor='title'>Post Title(Optional)</label>
+										<div className='input-group'>
+											<input
+												type='text'
+												className='form-control'
+												name='title'
+												value={title}
+												onChange={e => onChange(e)}
+												placeholder='Title for your post'
+											></input>
+										</div>
+									</div>
+
 									<div className='mb-3'>
 										<label htmlFor='detail'>Post Detail</label>
 										<div className='input-group'>
