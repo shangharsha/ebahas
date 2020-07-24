@@ -6,6 +6,7 @@ import Spinner from '../layout/Spinner';
 import { getPostById, deleteComment } from '../../actions/post';
 import CommentForm from './CommentForm';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const Post = ({
 	getPostById,
@@ -38,7 +39,7 @@ const Post = ({
 					</div>
 					<div className='col-12 col-lg-8 mb-4'>
 						<h4 className='mt-2 text-center'>{post.title}</h4>
-						<p className='text-black text-justify my-auto'>{post.detail}</p>
+						<ReactMarkdown className='text-justify' source={post.detail} />
 						<p>
 							Posted on <Moment format='D/MMM/YYYY'>{post.createdAt}</Moment>
 						</p>
