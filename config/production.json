@@ -1,7 +1,0 @@
-{
-	"mongoURI": "mongodb+srv://Struggle123:Struggle123@cluster0-3oopw.mongodb.net/<dbname>?retryWrites=true&w=majority",
-	"jwtSecret": "d3e34b84dbe0ac3dfd3ba7a101300bedd7b49c514752d4590eea2f7fe8ccef570ac314ec8ecd68accae906e5d321cdf906dad06dcc33921feef9088b007a5356",
-	"jwtResetPassword": "59949648c0a3424bcdaa074006017d46950dbd27738b9c8ee273ebad563a9df9ef3eb98536688a74b9fd38f2170b43945c12894b6e77e79aab31c4e3cbb0d430",
-	"username": "please.donot.replym3@gmail.com",
-	"password": "Password+123"
-}

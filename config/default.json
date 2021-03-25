@@ -1,7 +1,0 @@
-{
-	"mongoURI": "mongodb+srv://Struggle123:Struggle123@cluster0-3oopw.mongodb.net/<dbname>?retryWrites=true&w=majority",
-	"jwtSecret": "mysecrettoken",
-	"jwtResetPassword": "askdljlakjflakjflakfjkahfkjahf",
-	"username": "please.donot.replym3@gmail.com",
-	"password": "Password+123"
-}
